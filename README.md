@@ -33,5 +33,12 @@ Manage Personal Information: Users can update their personal information, such a
 
 Technology Used:
 Programming Language: Java
-Development Tools: Java Development Kit (JDK), any Java IDE (e.g., IntelliJ IDEA, Eclipse)
+Development Tools: Java Development Kit (JDK).
 Data Structures: HashMap, ArrayList
+
+//OUTPUT:
+![Screenshot (237)](https://github.com/user-attachments/assets/5addfac7-cf03-47b0-8824-e2c958419456)
+![Screenshot (238)](https://github.com/user-attachments/assets/3b97ce2c-3ea6-4ab0-8cbc-d1fa77ea9d60)
+![Screenshot (239)](https://github.com/user-attachments/assets/35be30d3-57b0-4105-8702-098103cb5b17)
+
+
