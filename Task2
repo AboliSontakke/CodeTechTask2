@@ -1,0 +1,209 @@
+//Banking Application
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+
+public class BankingSystem {
+	private static Map<Long, User> users = new HashMap<>();
+	private static Scanner sc = new Scanner(System.in);
+
+	public static void main(String[] args) {
+		boolean running = true;
+		while (running) {
+			System.out.println(
+					"1. Create Account\n2. Deposit\n3. Withdraw\n4. Transfer\n5. View Transaction History\n6. Manage Personal Information\n7. Exit");
+			System.out.println("Select service:");
+			int service = sc.nextInt();
+			switch (service) {
+			case 1:
+				createAccount();
+				break;
+			case 2:
+				deposit();
+				break;
+			case 3:
+				withdraw();
+				break;
+			case 4:
+				transfer();
+				break;
+			case 5:
+				viewTransactionHistory();
+				break;
+			case 6:
+				managePersonalInformation();
+				break;
+			case 7:
+				running = false;
+				break;
+			default:
+				System.out.println("Invalid choice. Please select a valid service.");
+				break;
+			}
+		}
+	}
+
+	private static void createAccount() {
+		System.out.println("Enter account number:");
+		long accountNumber = sc.nextLong();
+		sc.nextLine(); // consume newline
+		System.out.println("Enter name:");
+		String name = sc.nextLine();
+		users.put(accountNumber, new User(accountNumber, name));
+		System.out.println("Account created successfully!");
+	}
+
+	private static void deposit() {
+		System.out.println("Enter account number:");
+		long accountNumber = sc.nextLong();
+		User user = users.get(accountNumber);
+		if (user != null) {
+			System.out.println("Enter amount to deposit:");
+			long amount = sc.nextLong();
+			user.deposit(amount);
+			System.out.println("Deposited successfully! New balance: " + user.getBalance());
+		} else {
+			System.out.println("Account not found!");
+		}
+	}
+
+	private static void withdraw() {
+		System.out.println("Enter account number:");
+		long accountNumber = sc.nextLong();
+		User user = users.get(accountNumber);
+		if (user != null) {
+			System.out.println("Enter amount to withdraw:");
+			long amount = sc.nextLong();
+			if (user.withdraw(amount)) {
+				System.out.println("Withdrawn successfully! New balance: " + user.getBalance());
+			} else {
+				System.out.println("Insufficient balance or invalid amount!");
+			}
+		} else {
+			System.out.println("Account not found!");
+		}
+	}
+
+	private static void transfer() {
+		System.out.println("Enter your account number:");
+		long fromAccount = sc.nextLong();
+		User fromUser = users.get(fromAccount);
+		if (fromUser != null) {
+			System.out.println("Enter recipient's account number:");
+			long toAccount = sc.nextLong();
+			User toUser = users.get(toAccount);
+			if (toUser != null) {
+				System.out.println("Enter amount to transfer:");
+				long amount = sc.nextLong();
+				if (fromUser.withdraw(amount)) {
+					toUser.deposit(amount);
+					fromUser.addTransaction("Transferred " + amount + " to account " + toAccount);
+					toUser.addTransaction("Received " + amount + " from account " + fromAccount);
+					System.out.println("Transferred successfully! New balance: " + fromUser.getBalance());
+				} else {
+					System.out.println("Insufficient balance or invalid amount!");
+				}
+			} else {
+				System.out.println("Recipient account not found!");
+			}
+		} else {
+			System.out.println("Account not found!");
+		}
+	}
+
+	private static void viewTransactionHistory() {
+		System.out.println("Enter account number:");
+		long accountNumber = sc.nextLong();
+		User user = users.get(accountNumber);
+		if (user != null) {
+			System.out.println("Transaction History for account " + accountNumber + ":");
+			for (String transaction : user.getTransactionHistory()) {
+				System.out.println(transaction);
+			}
+		} else {
+			System.out.println("Account not found!");
+		}
+	}
+
+	private static void managePersonalInformation() {
+		System.out.println("Enter account number:");
+		long accountNumber = sc.nextLong();
+		User user = users.get(accountNumber);
+		if (user != null) {
+			System.out.println("1. Update Name\n2. View Name");
+			int choice = sc.nextInt();
+			sc.nextLine(); // consume newline
+			if (choice == 1) {
+				System.out.println("Enter new name:");
+				String newName = sc.nextLine();
+				user.updateName(newName);
+				System.out.println("Name updated successfully!");
+			} else if (choice == 2) {
+				System.out.println("Name: " + user.getName());
+			} else {
+				System.out.println("Invalid choice!");
+			}
+		} else {
+			System.out.println("Account not found!");
+		}
+	}
+}
+//User Class
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class User {
+	private long accountNumber;
+	private String name;
+	private long balance;
+	private List<String> transactionHistory;
+
+	public User(long accountNumber, String name) {
+		this.accountNumber = accountNumber;
+		this.name = name;
+		this.balance = 0;
+		this.transactionHistory = new ArrayList<>();
+	}
+
+	public long getAccountNumber() {
+		return accountNumber;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public long getBalance() {
+		return balance;
+	}
+
+	public void deposit(long amount) {
+		if (amount > 0) {
+			this.balance += amount;
+			transactionHistory.add("Deposited: " + amount);
+		}
+	}
+
+	public boolean withdraw(long amount) {
+		if (amount > 0 && this.balance >= amount) {
+			this.balance -= amount;
+			transactionHistory.add("Withdrew: " + amount);
+			return true;
+		}
+		return false;
+	}
+
+	public void addTransaction(String transaction) {
+		transactionHistory.add(transaction);
+	}
+
+	public List<String> getTransactionHistory() {
+		return transactionHistory;
+	}
+
+	public void updateName(String newName) {
+		this.name = newName;
+	}
+}
